@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: hirepilot-ai
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.6
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: hirepilot-db
+          property: connectionString
+      - key: ACCESS_TOKEN_MINUTES
+        value: "720"
+      - key: MAX_UPLOAD_MB
+        value: "8"
+databases:
+  - name: hirepilot-db
+    plan: basic-256mb
+    databaseName: hirepilot
+    user: hirepilot
